@@ -1,0 +1,118 @@
+---
+tittle: MY_PROJECT
+output: html_document
+---
+
+```{r barplots, fig.cap="barplot", warning=TRUE}
+# R code to display the barplot of number of OCV agaist the count as per county 
+library(readxl)
+ACTIVE <- read_excel("D:/PERIS/ACTIVE.xlsx")
+ACTIVE
+number_of_children <- table(ACTIVE$county)
+barplot(number_of_children, xlab = "county", ylab = "count", col = "blue", main = "BARPLOT OF NUMBER OF OVC AGAINST THE COUNT")
+# with or without birth certificate
+OVCwith_without_berthcertficate <- table(ACTIVE$birthcert)
+barplot(OVCwith_without_berthcertficate, xlab = "Birth certificate status", ylab = "count", main = "BARPLOT OF OVC WITH AND WITHOUT BIRTH CERTIFICATE", col = "red")
+# with or without HIV
+with_without_HIV_ovc <- table(ACTIVE$ovchivstatus)
+barplot(with_without_HIV_ovc, xlab = "HIV status", ylab = "count", col = "green", main = "BARPLOT TO SHOW OVC WITH/WITHOUT HIV")
+# barplot to show the age range of OVC
+age_range <- table(ACTIVE$agerange)
+barplot(age_range, xlab = "Age range", ylab = "count", col = "skyblue", main = "BARPLOT OF OVC AGE RANGE AGAINST COUNT")
+
+library(readxl)
+ACTIVE <- read_excel("D:/PERIS/ACTIVE.xlsx")
+ACTIVE
+ovcdisability<-table(ACTIVE$ovcdisability)
+ovcdisability
+barplot(ovcdisability, ylab = "Count", ylim = c(0, max(ovcdisability) + 5000), 
+        beside = TRUE, col = c("blue", "red"), names.arg = levels(ACTIVE$ovcdisability),
+        main = "Counts of Disability",
+        args.legend = list(title = "Disability Type"))
+
+# Add counts on the bars
+text(x = barplot(ovcdisability, plot = FALSE), y = ovcdisability/2, labels = ovcdisability, pos = 3, cex = 0.9, col = "black")
+
+
+
+
+library(readxl)
+caregiverhivstatus<-table(ACTIVE$caregiverhivstatus)
+caregiverhivstatus
+# Sample data based on the counts you provided
+caregiverhivstatus <- c("HEI NOT KNOWN", "HIV Test Not Required", "NEGATIVE", "NOT KNOWN", "POSITIVE")
+counts <- c(15, 8, 6079, 1258, 54174)
+
+# Create a bar plot with counts displayed inside the bars using rainbow colors
+barplot(counts, names.arg = caregiverhivstatus,xlab = "care giver hiv status", ylab = "Count", col = rainbow(length(counts)),
+        main = "Caregiver HIV Status")
+
+# Add counts inside the bars
+text(x = 1:length(caregiverhivstatus), y = counts/2, labels = counts, pos = 3, cex = 0.9, col = "black")
+
+
+library(readxl)
+schoollevel<-table(ACTIVE$schoollevel)
+schoollevel
+# Sample data based on the counts you provided
+education_levels <- c("ECDE","Not in School", "Primary", "Secondary", "Tertiary", "University")
+counts <- c(6978, 10838, 30755, 15500, 82, 9)
+
+# Create a bar plot with counts displayed inside the bars using rainbow colors
+barplot(counts, names.arg = education_levels,xlab = "Education level", ylab = "Count", col = rainbow(length(counts)),
+        main = "Education Levels")
+
+# Add counts inside the bars
+text(x = 1:length(education_levels), y = counts/2, labels = counts, pos = 3, cex = 0.7, col = "black")
+
+
+immunization<-table(ACTIVE$immunization)
+immunization
+# Sample data based on the counts you provided
+immunization_status <- c("Fully Immunized", "Not Completed", "Not Immunized", "Not Known")
+counts <- c(5398, 10571, 166, 48027)
+
+# Create a bar plot with counts displayed inside the bars using rainbow colors
+barplot(counts, names.arg = immunization_status,xlab = "imunization status", ylab = "Count", col = rainbow(length(counts)),
+        main = "Immunization Status")
+
+# Add counts inside the bars
+text(x = 1:length(immunization_status), y = counts/2, labels = counts, pos = 3, cex = 0.9, col = "black")
+#denis project
+library(ggplot2)
+library(readxl)
+library(gplots)
+
+# Read data from Excel files
+Cpara <- read_excel("D:/DENIS/Cpara.xlsx")
+CasePlan <- read_excel("D:/DENIS/CasePlan.xlsx")
+ListOfOvcServed <- read_excel("D:/DENIS/ListOfOvcServed.xlsx")
+ACTIVE <- read_excel("D:/DENIS/ACTIVE.xlsx")
+
+# Find common IDs
+common_ids <- intersect(intersect(Cpara$cpims_ovc_id, CasePlan$cpims_ovc_id), ListOfOvcServed$cpims_ovc_id)
+registration_with_common_ids1 <- ACTIVE[ACTIVE$cpims_ovc_id %in% common_ids, ]
+ids_without_common_data2 <- ACTIVE[!ACTIVE$cpims_ovc_id %in% common_ids, ]
+
+# Create a data frame with all IDs
+all_ids <- rbind(data.frame(Status = "Has cpara, caseplan, OVCserved", registration_with_common_ids1),
+                 data.frame(Status = "Has NO cpara, caseplan, OVCserved", ids_without_common_data2))
+
+# Create a custom color palette for the bars
+colors <- c("blue", "green")
+
+# Create the bar plot
+p <- ggplot(all_ids, aes(x = Status, fill = Status)) +
+  geom_bar(color = "black") +
+  geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.5) +  # Add count labels
+  scale_fill_manual(values = colors) +  # Apply custom colors
+  labs(title = "Counts of cpims_ovc_id with and without cpara, caseplan, OVCserved",
+       x = "Status", y = "Count")
+
+print(p)
+
+
+
+
+
+
